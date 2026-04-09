@@ -8,14 +8,23 @@ import sessionRoutes from "./routes/sessions.routes.js";
 import workoutRoutes from './routes/workout.routes.js';
 import exerciseRoutes from './routes/exercise.routes.js';
 import profileRoutes from  './routes/profile.routes.js';
+import { globalLimiter } from "./middleware/rateLimiter.js";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+// Unprotected routes
 app.use("/health", healthRoutes);
 app.use('/exercises', exerciseRoutes);
+
+// Auth
+app.use(requireAuth);
+app.use(syncUser);
+
+// Rate limit
+app.use(globalLimiter);
 
 app.use("/workout", requireAuth, syncUser, workoutRoutes);
 app.use("/sessions", requireAuth, syncUser, sessionRoutes);
