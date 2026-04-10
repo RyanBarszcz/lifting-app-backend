@@ -12,7 +12,8 @@ import { globalLimiter, strictLimiter } from "./middleware/rateLimiter.js";
 
 const allowedOrigins = [
   "https://lifting-app-six.vercel.app",
-  "http://localhost:3001/",
+  "http://localhost:3000",
+  "http://localhost:3001",
 ];
 
 const app = express();
