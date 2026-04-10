@@ -12,7 +12,7 @@ export const globalLimiter = rateLimit({
 // Strict limiter for write-heavy routes (sessions, etc.)
 export const strictLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 50,
+  max: 100,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: "Too many actions. Slow down." },
