@@ -1,4 +1,4 @@
-import rateLimit from "express-rate-limit";
+import rateLimit, {ipKeyGenerator} from "express-rate-limit";
 
 // Global limiter (applies to all routes)
 export const globalLimiter = rateLimit({
@@ -12,13 +12,17 @@ export const globalLimiter = rateLimit({
 // Strict limiter for write-heavy routes (sessions, etc.)
 export const strictLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 50, // tighter limit
+  max: 50,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: "Too many actions. Slow down." },
 
-  // per-user limiting
   keyGenerator: (req) => {
-    return req.dbUser?.id || req.ip;
+    if (req.dbUser?.id) {
+      // per user
+      return req.dbUser.id; 
+    }
+    // Safe IP fallback
+    return ipKeyGenerator(req);
   },
 });
