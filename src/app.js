@@ -10,9 +10,25 @@ import exerciseRoutes from './routes/exercise.routes.js';
 import profileRoutes from  './routes/profile.routes.js';
 import { globalLimiter } from "./middleware/rateLimiter.js";
 
+const allowedOrigins = [
+  "https://lifting-app-six.vercel.app",
+];
+
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true,
+}));
+app.options("*", cors());
+
 app.use(express.json());
 
 // Unprotected routes
@@ -20,8 +36,8 @@ app.use("/health", healthRoutes);
 app.use('/exercises', exerciseRoutes);
 
 // Auth
-app.use(requireAuth);
-app.use(syncUser);
+// app.use(requireAuth);
+// app.use(syncUser);
 
 // Rate limit
 app.use(globalLimiter);
