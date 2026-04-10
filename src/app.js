@@ -8,7 +8,7 @@ import sessionRoutes from "./routes/sessions.routes.js";
 import workoutRoutes from './routes/workout.routes.js';
 import exerciseRoutes from './routes/exercise.routes.js';
 import profileRoutes from  './routes/profile.routes.js';
-import { globalLimiter } from "./middleware/rateLimiter.js";
+import { globalLimiter, strictLimiter } from "./middleware/rateLimiter.js";
 
 const allowedOrigins = [
   "https://lifting-app-six.vercel.app",
@@ -27,7 +27,7 @@ app.use(cors({
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true,
 }));
-app.options("*", cors());
+// app.options("*", cors());
 
 app.use(express.json());
 
@@ -42,10 +42,10 @@ app.use('/exercises', exerciseRoutes);
 // Rate limit
 app.use(globalLimiter);
 
-app.use("/workout", requireAuth, syncUser, workoutRoutes);
-app.use("/sessions", requireAuth, syncUser, sessionRoutes);
-app.use("/templates", requireAuth, syncUser, templateRoutes);
-app.use("/profile", requireAuth, syncUser, profileRoutes);
+app.use("/workout", requireAuth, syncUser, strictLimiter, workoutRoutes);
+app.use("/sessions", requireAuth, syncUser, strictLimiter, sessionRoutes);
+app.use("/templates", requireAuth, syncUser, strictLimiter, templateRoutes);
+app.use("/profile", requireAuth, syncUser, strictLimiter, profileRoutes);
 
 
 export default app;
