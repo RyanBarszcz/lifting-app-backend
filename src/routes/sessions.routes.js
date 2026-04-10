@@ -82,7 +82,7 @@ router.get("/", async (req, res) => {
 
       return {
         id: session.id,
-        title: session.template?.title || "Workout",
+        title: session.title || session.template?.title || "Workout",
         completedAt: formattedDate,
         duration,
         totalVolume,
